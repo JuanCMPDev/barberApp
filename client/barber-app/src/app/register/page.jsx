@@ -33,7 +33,7 @@ export default function Page() {
             if (response.ok) {
                 setMessage(result.message || 'Registro exitoso');
             } else {
-                setMessage(result.error || 'Error en el registro');
+                setMessage(result.message || 'Error en el registro');
             }
         } catch (error) {
             setMessage('Error en la comunicación con el servidor');

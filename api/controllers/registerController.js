@@ -5,8 +5,7 @@ const registerController = async (req, res) => {
         await register(req.body);
         return res.status(200).json('El usuario ha sido creado');
     } catch (err) {
-        console.error(err);
-        return res.status(500).json(err.message || 'Internal server error.');
+        return res.status(400).json({message: err.message || 'Internal server error.'});
     }
 }
 

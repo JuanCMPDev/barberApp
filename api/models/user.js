@@ -24,7 +24,18 @@ const saveUser = (name, email, hashedPassword, rol) => {
     })
 }
 
+const getUserByEmail = (email) => {
+    return new Promise((resolve, reject) => {
+        const q = 'SELECT * FROM barberApp.users WHERE email = ?';
+        db.query(q, [email], (err, data) => {
+            if (err) return reject(err);
+            resolve(data[0]);
+        });
+    });
+};
+
 module.exports = {
     checkUserExists,
-    saveUser
+    saveUser,
+    getUserByEmail
 }

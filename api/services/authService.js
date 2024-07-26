@@ -47,6 +47,7 @@ const login = async ({ email, password }) => {
 
     // buscamos el usuario en la base de datos:
     const user = await getUserByEmail(email);
+    console.log(user);
     if (!user || !user.password) {
         throw new Error('Usuario no encontrado o contraseña incorrecta');
     }
@@ -59,14 +60,16 @@ const login = async ({ email, password }) => {
 
     // creamos un JWT para la sesión:
     const token = jwt.sign({
-        id: user.id,
+        id: user.user_id,
+        name: user.name,
         email: user.email,
         rol: user.rol,
     },
         'clave_secreta',
         { expiresIn: '1h' });
 
-    return token;
+    const { password: _, ...userWithoutPassword } = user;
+    return { token, user: userWithoutPassword };
 };
 
 module.exports = {

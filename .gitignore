@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Additional ignores for api and client node_modules
+api/node_modules/
+client/node_modules/

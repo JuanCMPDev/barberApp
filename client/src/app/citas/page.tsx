@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import Calendar from '../../components/Calendar';
 import { useSearchParams } from 'next/navigation';
 import { parseISO } from 'date-fns';
+import NavbarComponent from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 const Page = () => {
   const searchParams = useSearchParams();
@@ -22,7 +24,9 @@ const Page = () => {
 
   return (
     <div>
+      <NavbarComponent/>
       <Calendar initialDate={date} />
+      <Footer/>
     </div>
   );
 };

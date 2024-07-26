@@ -1,24 +1,26 @@
-const {login} = require('../services/authService.js');
+const { login } = require('../services/authService.js');
 var cookie = require('cookie');
 
 const loginController = async (req, res) => {
-    try{
+    try {
         // recuperamos el token
-        const token = await login(req.body);
-        // creamos la cookie
-        const serialized = cookie.serialize('access_token', token);
-        // configuramos el encabezado 
-        res.setHeader('Set-Cookie', serialized,{
+        const { token, user } = await login(req.body);
+
+        // configuramos la cookie
+        const serialized = cookie.serialize('access_token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'none',
-            maxAge: 1000 * 60 * 60,
+            maxAge: 60 * 60, // 1 hora en segundos
             path: '/'
         });
-        return res.status(200).json('Login correcto')
-    } catch(err){
-        res.status(400).json({message: err.message || 'error interno del servidor'});
+
+        // configuramos el encabezado 
+        res.setHeader('Set-Cookie', serialized);
+
+        return res.status(200).json(user);
+    } catch (err) {
+        res.status(400).json({ message: err.message || 'Error interno del servidor' });
     }
-}
+};
 
 module.exports = loginController;

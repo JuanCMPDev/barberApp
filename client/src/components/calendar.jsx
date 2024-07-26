@@ -27,7 +27,7 @@ const Calendar = ({ initialDate }) => {
   const times = getTimes(date);
 
   return (
-    <div className="flex h-screen flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center">
       {date.justDate ? (
         <div className="flex gap-4 flex-wrap justify-center">
           {times?.map((time, i) => (

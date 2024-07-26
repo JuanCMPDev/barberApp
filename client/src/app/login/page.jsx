@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "../../context/AuthContext";
 
 export default function LoginPage() {
   const [data, setData] = useState({
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
+  const { login, currentUser, setCurrentUser } = useSession();
 
   const handleChange = (e) => {
     setData((prevData) => ({
@@ -23,28 +25,35 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
     if (!data.email || !data.password) {
-        setMessage("Por favor, completa todos los campos.");
-        return;
-      }
+      setMessage("Por favor, completa todos los campos.");
+      return;
+    }
+  
     try {
-      const response = await fetch("http://localhost:8800/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        credentials: "include", // Para permitir el envío de cookies
-      });
-
-      const result = await response.json();
-
+      const response = await login(data);
+  
+      // Verificamos el tipo de respuesta
       if (response.ok) {
-        setSuccess(true);
-        setMessage(result.message || "Inicio de sesión exitoso");
-        
+        const result = await response.json();
+        if (result && result.email) {
+          setSuccess(true);
+          setCurrentUser(result);
+          localStorage.setItem('currentUser', JSON.stringify(result));
+          setMessage("Inicio de sesión exitoso");
+          router.push('/');
+        } else {
+          setSuccess(false);
+          setMessage("Error inesperado durante el inicio de sesión");
+        }
       } else {
+        const result = await response.json();
+        setSuccess(false);
         setMessage(result.message || "Error en el inicio de sesión");
       }
     } catch (error) {
+      setSuccess(false);
       setMessage("Error en la comunicación con el servidor");
     }
   };
@@ -65,7 +74,7 @@ export default function LoginPage() {
           <div className="relative">
             <div className="w-full max-w-xl xl:w-full xl:mx-auto xl:pr-24 xl:max-w-xl">
               <h3 className="text-4xl font-bold text-white">
-                Únete a nuestra familia<br className="hidden xl:block" />
+                Únete a nuestra familia <br className="hidden xl:block" />
                 agenda tu cita
               </h3>
               <ul className="grid grid-cols-1 mt-10 sm:grid-cols-2 gap-x-8 gap-y-6">

@@ -1,3 +1,5 @@
+const cookie = require('cookie');
+
 const logoutController = (req, res) => {
   const serialized = cookie.serialize('access_token', '', {
     httpOnly: true,
